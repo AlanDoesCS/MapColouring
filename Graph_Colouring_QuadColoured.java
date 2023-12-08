@@ -16,7 +16,7 @@ import javax.swing.*;
 
 public class Graph_Colouring_QuadColoured {
     public static class directions {
-        private static class dir {
+        public static class dir {
             public int x;
             public int y;
 
@@ -50,14 +50,6 @@ public class Graph_Colouring_QuadColoured {
             size_y = 60;
             colour =  defaultColour;
         }
-        public cNode(String n_id, int x_coordinate, int y_coordinate, int width, int height) { // specific sized Node
-            id = n_id;
-            x = x_coordinate;
-            y = y_coordinate;
-            size_x = width;
-            size_y = height;
-            colour =  defaultColour;
-        }
         public void setBordering(cNode[] arr) {
             Bordering = arr;
             UncolouredBordering = arr;
@@ -66,9 +58,9 @@ public class Graph_Colouring_QuadColoured {
             int newlength = UncolouredBordering.length-1; // removing one element, so one shorter
             cNode[] tmp = new cNode[newlength];
             int index = 0;
-            for (int i=0; i< UncolouredBordering.length; i++) {
-                if (UncolouredBordering[i] != coloured_state && index< tmp.length) {
-                    tmp[index] = UncolouredBordering[i];
+            for (Graph_Colouring_QuadColoured.cNode cNode : UncolouredBordering) {
+                if (cNode != coloured_state && index < tmp.length) {
+                    tmp[index] = cNode;
                     index++;
                 }
             }
@@ -148,13 +140,6 @@ public class Graph_Colouring_QuadColoured {
         } else {
             return available[0];
         }
-    }
-
-    public static cNode[] cNodeAppend(cNode[] arr, cNode new_value) { // Adds to new ending index
-        cNode[] temp = new cNode[arr.length+1];
-        System.arraycopy(arr, 0, temp, 0, arr.length);
-        temp[arr.length] = new_value;
-        return temp;
     }
 
     public static void main(String[] args) {
