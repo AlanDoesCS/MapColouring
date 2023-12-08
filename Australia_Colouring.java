@@ -32,14 +32,6 @@ public class Australia_Colouring {
             size_y = 60;
             colour =  defaultColour;
         }
-        public cNode(String n_id, int x_coordinate, int y_coordinate, int width, int height) { // specific sized Node
-            id = n_id;
-            x = x_coordinate;
-            y = y_coordinate;
-            size_x = width;
-            size_y = height;
-            colour =  defaultColour;
-        }
         public void setBordering(cNode[] arr) {
             Bordering = arr;
             UncolouredBordering = arr;
