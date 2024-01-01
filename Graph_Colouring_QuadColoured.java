@@ -1,11 +1,13 @@
 import java.awt.*;
 import java.awt.geom.Line2D;
 import javax.swing.*;
+import java.util.Arrays;
+
 /*
-    Algorithm to find how to colour a map using 4 colours:
+    Algorithm to find how to colour a map using 3 colours:
 
     1. Assign a random colour to the state with the most borders
-    2. Pick a one of the countries that neighbor it with the least amount of neighbors
+    2. Pick a one of the countries that neighbor it with the least amount of neighbors if no neighbor has only one option left
         a. Assign it one of the 2 remaining colours
         b. Pick a country that borders it with 2 coloured neighbors and is uncoloured
         loop back to a until there are no bordering countries that are uncoloured
@@ -16,7 +18,7 @@ import javax.swing.*;
 
 public class Graph_Colouring_QuadColoured {
     public static class directions {
-        public static class dir {
+        private static class dir {
             public int x;
             public int y;
 
@@ -39,8 +41,8 @@ public class Graph_Colouring_QuadColoured {
         public Color colour;
         public String id;
         public final int x, y, size_x, size_y;
-        public cNode[] Bordering;
-        public cNode[] UncolouredBordering;
+        public cNode[] Bordering, UncolouredBordering;
+        public Color[] colours_used={};
 
         public cNode(String n_id, int x_coordinate, int y_coordinate) {
             id = n_id;
@@ -50,21 +52,54 @@ public class Graph_Colouring_QuadColoured {
             size_y = 60;
             colour =  defaultColour;
         }
+        public cNode(String n_id, int x_coordinate, int y_coordinate, int width, int height) { // specific sized Node
+            id = n_id;
+            x = x_coordinate;
+            y = y_coordinate;
+            size_x = width;
+            size_y = height;
+            colour =  defaultColour;
+        }
         public void setBordering(cNode[] arr) {
             Bordering = arr;
             UncolouredBordering = arr;
         }
         public void BorderColoured(cNode coloured_state) {
-            int newlength = UncolouredBordering.length-1; // removing one element, so one shorter
-            cNode[] tmp = new cNode[newlength];
+
+            //update Uncoloured Border Array
+            int new_uc_len = UncolouredBordering.length-1; // removing one element, so uncoloured length is one shorter
+            cNode[] tmp = new cNode[new_uc_len];
             int index = 0;
-            for (Graph_Colouring_QuadColoured.cNode cNode : UncolouredBordering) {
-                if (cNode != coloured_state && index < tmp.length) {
-                    tmp[index] = cNode;
+            for (int i=0; i< UncolouredBordering.length; i++) {
+                if (UncolouredBordering[i] != coloured_state && index< tmp.length) {
+                    tmp[index] = UncolouredBordering[i];
                     index++;
                 }
             }
             UncolouredBordering = tmp;
+
+            //update Colour Array
+            boolean unique_colour = true;
+
+            for (Color col : colours_used) {
+                if (coloured_state.colour == col) {
+                    unique_colour = false;
+                    break;
+                }
+            }
+            if (unique_colour) {
+                int new_length = colours_used.length +1;
+                Color[] tmp_cols = new Color[new_length];
+
+                //update array
+                int ic = 0;
+                for (Color col : colours_used) {
+                    tmp_cols[ic] = col;
+                    ic++;
+                }
+                tmp_cols[new_length-1] = coloured_state.colour;
+                colours_used = tmp_cols;
+            }
         }
 
         public void setColour(Color newColour) {
@@ -109,7 +144,7 @@ public class Graph_Colouring_QuadColoured {
             return validNeighbors;
         }
     }
-    public static Color find_colour(cNode state, Color[] colors) {
+    public static Color find_colour(cNode state, Color[] colors) { // Colouring algorithm
         Color[] available = colors;
 
         if (state.Bordering.length > 0) {
@@ -140,6 +175,13 @@ public class Graph_Colouring_QuadColoured {
         } else {
             return available[0];
         }
+    }
+
+    public static cNode[] cNodeAppend(cNode[] arr, cNode new_value) { // Adds to new ending index
+        cNode[] temp = new cNode[arr.length+1];
+        System.arraycopy(arr, 0, temp, 0, arr.length);
+        temp[arr.length] = new_value;
+        return temp;
     }
 
     public static void main(String[] args) {
@@ -210,11 +252,17 @@ public class Graph_Colouring_QuadColoured {
         cNode current_state = start_state;
 
         while(!coloured) {
-            if (current_state.UncolouredBordering.length != 0) {
+            if (current_state.UncolouredBordering.length != 0) { // while it has borders
                 cNode next_state = current_state.UncolouredBordering[0];
                 for (cNode bordering : current_state.UncolouredBordering) {
                     if (bordering.UncolouredBordering.length < current_state.UncolouredBordering.length) {
                         next_state = bordering; // update next state if bordering state has fewer uncoloured borders
+                    }
+                    // if there is only 1 possibility for one of the neighbors
+                    if (bordering.colours_used.length == map_colours.length -1) {
+                        System.out.println("One possibility: "+bordering.id);
+                        next_state = bordering;
+                        break;
                     }
                 }
                 current_state = next_state;
