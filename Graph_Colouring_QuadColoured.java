@@ -17,6 +17,13 @@ import java.util.Arrays;
 */
 
 public class Graph_Colouring_QuadColoured {
+    public static String intToAlphabet(int i) {
+        if (0 < i && i < 27) {
+            return String.valueOf((char)(i + 64)); // character manipulation
+        } else {
+            return null;
+        }
+    }
     public static class directions {
         private static class dir {
             public int x;
@@ -144,6 +151,7 @@ public class Graph_Colouring_QuadColoured {
             return validNeighbors;
         }
     }
+
     public static Color find_colour(cNode state, Color[] colors) { // Colouring algorithm
         Color[] available = colors;
 
@@ -174,53 +182,19 @@ public class Graph_Colouring_QuadColoured {
         }
     }
 
-    public static cNode[] cNodeAppend(cNode[] arr, cNode new_value) { // Adds to new ending index
-        cNode[] temp = new cNode[arr.length+1];
-        System.arraycopy(arr, 0, temp, 0, arr.length);
-        temp[arr.length] = new_value;
-        return temp;
-    }
-
     public static void main(String[] args) {
         final Color[] map_colours = {Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA};
+
+        final int grid_size_x = 5, grid_size_y = 5, padding = 10, spacing = 100;
+
         // Create Nodes
-        cNode A1 = new cNode("A1", 10, 10);
-        cNode B1 = new cNode("B1", 110, 10);
-        cNode C1 = new cNode("C1", 210, 10);
-        cNode D1 = new cNode("D1", 310, 10);
-        cNode E1 = new cNode("E1", 410, 10);
-
-        cNode A2 = new cNode("A2", 10, 110);
-        cNode B2 = new cNode("B2", 110, 110);
-        cNode C2 = new cNode("C2", 210, 110);
-        cNode D2 = new cNode("D2", 310, 110);
-        cNode E2 = new cNode("E2", 410, 110);
-
-        cNode A3 = new cNode("A3", 10, 210);
-        cNode B3 = new cNode("B3", 110, 210);
-        cNode C3 = new cNode("C3", 210, 210);
-        cNode D3 = new cNode("D3", 310, 210);
-        cNode E3 = new cNode("E3", 410, 210);
-
-        cNode A4 = new cNode("A4", 10, 310);
-        cNode B4 = new cNode("B4", 110, 310);
-        cNode C4 = new cNode("C4", 210, 310);
-        cNode D4 = new cNode("D4", 310, 310);
-        cNode E4 = new cNode("E4", 410, 310);
-
-        cNode A5 = new cNode("A5", 10, 410);
-        cNode B5 = new cNode("B5", 110, 410);
-        cNode C5 = new cNode("C5", 210, 410);
-        cNode D5 = new cNode("D5", 310, 410);
-        cNode E5 = new cNode("E5", 410, 410);
-
-        cNode[][] Grid = {
-                {A1, B1, C1, D1, E1}, // orientation
-                {A2, B2, C2, D2, E2},
-                {A3, B3, C3, D3, E3},
-                {A4, B4, C4, D4, E4},
-                {A5, B5, C5, D5, E5}
-        };
+        cNode[][] Grid = new cNode[grid_size_y][grid_size_x];
+        for (int y=0; y<grid_size_y; y++) {
+            for (int x=0; x<grid_size_x; x++) {
+                String id = intToAlphabet(x+1) + String.valueOf(y+1);
+                Grid[y][x] = new cNode(id, padding+spacing*x, padding+spacing*y);
+            }
+        }
 
         // Borders
         for (int row=0; row<Grid.length; row++) {
