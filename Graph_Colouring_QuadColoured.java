@@ -182,6 +182,17 @@ public class Graph_Colouring_QuadColoured {
         }
     }
 
+    public static cNode[] Append(cNode new_value, cNode[] array) { // returns a new array with the new value as last index
+        cNode[] tmp = new cNode[array.length+1];
+        int i = 0;
+        for (cNode elem : array) {
+            tmp[i] = elem;
+            i++;
+        }
+        tmp[tmp.length-1] = new_value;
+        return tmp;
+    }
+
     public static void main(String[] args) {
         final Color[] map_colours = {Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA};
 
@@ -191,7 +202,7 @@ public class Graph_Colouring_QuadColoured {
         cNode[][] Grid = new cNode[grid_size_y][grid_size_x];
         for (int y=0; y<grid_size_y; y++) {
             for (int x=0; x<grid_size_x; x++) {
-                String id = intToAlphabet(x+1) + String.valueOf(y+1);
+                String id = intToAlphabet(x+1) + (y + 1);
                 Grid[y][x] = new cNode(id, padding+spacing*x, padding+spacing*y);
             }
         }
@@ -218,7 +229,7 @@ public class Graph_Colouring_QuadColoured {
         }
 
         JFrame fr = new JFrame();
-        fr.setBounds(10, 10, 500, 500);
+        fr.setBounds(10, 10, grid_size_x*spacing+2*padding, grid_size_y*spacing+2*padding);
         fr.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         // Colouring algorithm
@@ -233,6 +244,8 @@ public class Graph_Colouring_QuadColoured {
         System.out.println("\nFINAL START: "+start_state.id+"------------------\n");
         start_state.setColour(map_colours[0]);
         cNode current_state = start_state;
+
+        cNode[] trace = {current_state};
 
         while(!coloured) {
             if (current_state.UncolouredBordering.length != 0) { // while it has borders
@@ -263,6 +276,7 @@ public class Graph_Colouring_QuadColoured {
                     coloured = true;  // end the while loop
                 }
             }
+            trace = Append(current_state, trace);
         }
 
 
@@ -288,15 +302,6 @@ public class Graph_Colouring_QuadColoured {
             }
         };
 
-        //Title
-        /*
-        JLabel title = new JLabel("4 Coloured graph");
-        title.setFont(new Font("Arial", Font.BOLD, 16));
-        title.setBounds(10, 400, 500, 25);
-        title.setForeground(Color.darkGray);
-        fr.add(title);
-         */
-
         // Add State Labels (state ids)
         for (cNode state : states) {
             int padAdj = state.size_x/8 * state.id.length();// Padding adjustment depending on id length
@@ -310,5 +315,10 @@ public class Graph_Colouring_QuadColoured {
         fr.add(pn);
         fr.setVisible(true);
         System.out.println("Displayed Successfully.");
+
+        System.out.println("\nFinal Trace:");
+        for (cNode elem : trace) {
+            System.out.print(" →" + elem.id);
+        }
     }
 }
