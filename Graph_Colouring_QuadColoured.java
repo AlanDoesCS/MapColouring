@@ -148,10 +148,7 @@ public class Graph_Colouring_QuadColoured {
         Color[] available = colors;
 
         if (state.Bordering.length > 0) {
-            System.out.println("state:"+state.id+"| Neighbors: "+state.Bordering.length);
-            for (cNode Neighbor : state.Bordering) {
-                System.out.println("Neighbor: "+Neighbor.id);
-            }
+            System.out.println("\nstate:"+state.id+"| Neighbors: "+state.Bordering.length);
 
             for (cNode Neighbor : state.Bordering) {
                 if (Neighbor.colour != Neighbor.defaultColour) { // update list of available colours if one is not available
@@ -191,26 +188,38 @@ public class Graph_Colouring_QuadColoured {
         cNode B1 = new cNode("B1", 110, 10);
         cNode C1 = new cNode("C1", 210, 10);
         cNode D1 = new cNode("D1", 310, 10);
+        cNode E1 = new cNode("E1", 410, 10);
 
         cNode A2 = new cNode("A2", 10, 110);
         cNode B2 = new cNode("B2", 110, 110);
         cNode C2 = new cNode("C2", 210, 110);
         cNode D2 = new cNode("D2", 310, 110);
+        cNode E2 = new cNode("E2", 410, 110);
 
         cNode A3 = new cNode("A3", 10, 210);
         cNode B3 = new cNode("B3", 110, 210);
         cNode C3 = new cNode("C3", 210, 210);
         cNode D3 = new cNode("D3", 310, 210);
+        cNode E3 = new cNode("E3", 410, 210);
 
         cNode A4 = new cNode("A4", 10, 310);
         cNode B4 = new cNode("B4", 110, 310);
         cNode C4 = new cNode("C4", 210, 310);
         cNode D4 = new cNode("D4", 310, 310);
+        cNode E4 = new cNode("E4", 410, 310);
 
-        cNode[][] Grid = {{A1, B1, C1, D1}, // orientation
-                {A2, B2, C2, D2},
-                {A3, B3, C3, D3},
-                {A4, B4, C4, D4}
+        cNode A5 = new cNode("A5", 10, 410);
+        cNode B5 = new cNode("B5", 110, 410);
+        cNode C5 = new cNode("C5", 210, 410);
+        cNode D5 = new cNode("D5", 310, 410);
+        cNode E5 = new cNode("E5", 410, 410);
+
+        cNode[][] Grid = {
+                {A1, B1, C1, D1, E1}, // orientation
+                {A2, B2, C2, D2, E2},
+                {A3, B3, C3, D3, E3},
+                {A4, B4, C4, D4, E4},
+                {A5, B5, C5, D5, E5}
         };
 
         // Borders
@@ -268,12 +277,17 @@ public class Graph_Colouring_QuadColoured {
                 current_state = next_state;
                 current_state.setColour(find_colour(current_state, map_colours));
             } else {
+                boolean uncoloured_found = false; // check for uncoloured territories
                 for (cNode state : states) {
-                    if (state.colour == state.defaultColour) {
-                        state.setColour(find_colour(state, map_colours)); // Attempt to assign a new colour to the state
+                    if (state.colour == state.defaultColour) { // if not assigned a colour
+                        current_state = state;
+                        uncoloured_found = true;
+                        break;
                     }
                 }
-                coloured = true;  // end the while loop
+                if (!uncoloured_found) { // if no uncoloured nodes found then the map is complete
+                    coloured = true;  // end the while loop
+                }
             }
         }
 
@@ -301,11 +315,13 @@ public class Graph_Colouring_QuadColoured {
         };
 
         //Title
+        /*
         JLabel title = new JLabel("4 Coloured graph");
         title.setFont(new Font("Arial", Font.BOLD, 16));
         title.setBounds(10, 400, 500, 25);
         title.setForeground(Color.darkGray);
         fr.add(title);
+         */
 
         // Add State Labels (state ids)
         for (cNode state : states) {
